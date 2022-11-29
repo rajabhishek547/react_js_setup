@@ -1,19 +1,36 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import { Provider } from 'react-redux';
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
+import './index.sass';
+import * as serviceWorker from './serviceWorker';
+import CreateStore from './store';
+import Routes from './config/Routes';
+import * as ReactDOMClient from 'react-dom/client';
+
+const store = CreateStore();
+// if ("serviceWorker" in navigator) {
+//   navigator.serviceWorker
+//     .register("./firebase-messaging-sw.js")
+//     .then(function (registration) {
+//       console.log("Registration successful, scope is:", registration.scope);
+//     })
+//     .catch(function (err) {
+//       console.log("Service worker registration failed, error:", err);
+//     });
+// }
+
+if('serviceWorker' in navigator) { 
+  navigator.serviceWorker.register('../firebase-messaging-sw.js')
+.then(function(registration) {
+ console.log("Service Worker Registered");
+// messaging.useServiceWorker(registration);  
+  }); 
+  }
+// @ts-ignore
+const root = ReactDOMClient.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+  <Provider store={store}>
+    <Routes />
+    </Provider>
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+serviceWorker.unregister();
